@@ -1,35 +1,31 @@
-# Step 1: Use a lightweight Node image
+# -------- Build Stage --------
 FROM node:18-alpine AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json first (for caching)
+# Copy package files and install dependencies
 COPY package.json package-lock.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy all source files
+# Copy source code
 COPY . .
 
-# Build the React app (Tailwind CSS is compiled here)
+# Build React app (Tailwind CSS is compiled here)
 RUN npm run build
 
-# ----------------------------
-# Step 2: Production image
+# -------- Production Stage --------
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Install serve globally to serve the build folder
+# Install serve to serve the build folder
 RUN npm install -g serve
 
-# Copy the build folder from previous stage
+# Copy the build folder from the build stage
 COPY --from=build /app/build ./build
 
-# Expose port
+# Expose port 8080
 EXPOSE 8080
 
-# Serve the app
+# Serve the React app
 CMD ["serve", "-s", "build", "-l", "8080"]
