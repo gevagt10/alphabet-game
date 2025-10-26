@@ -1,4 +1,4 @@
-# -------- Build Stage --------
+# ---------- Build Stage ----------
 FROM node:18-alpine AS build
 
 WORKDIR /app
@@ -13,7 +13,7 @@ COPY . .
 # Build React app (Tailwind CSS is compiled here)
 RUN npm run build
 
-# -------- Production Stage --------
+# ---------- Production Stage ----------
 FROM node:18-alpine
 
 WORKDIR /app
@@ -21,7 +21,7 @@ WORKDIR /app
 # Install serve to serve the build folder
 RUN npm install -g serve
 
-# Copy the build folder from the build stage
+# Copy build folder from build stage
 COPY --from=build /app/build ./build
 
 # Expose port 8080
