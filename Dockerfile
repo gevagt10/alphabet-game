@@ -1,18 +1,17 @@
-# Use Node.js Alpine image
 FROM node:18-alpine
-
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and install serve globally
+# Copy package files
 COPY package.json package-lock.json ./
-RUN npm install -g serve
+RUN npm install
 
-# Copy all files
+# Copy all source code
 COPY . .
 
 # Build React app
-RUN npm install && npm run build
+RUN npm run build
 
-# Serve the build folder
+# Install serve to serve static files
+RUN npm install -g serve
+
 CMD ["serve", "-s", "build", "-l", "8080"]
