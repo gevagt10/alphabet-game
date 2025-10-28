@@ -2,10 +2,55 @@ import React, { useMemo, useState, useEffect, useRef } from "react";
 
 const BASE_LETTERS = ["א","ב","ג","ד","ה","ו","ז","ח","ט","י","כ","ל","מ","נ","ס","ע","פ","צ","ק","ר","ש","ת"];
 const FINAL_LETTERS = ["ך","ם","ן","ף","ץ"];
-
+const AUDIO_BASE = process.env.PUBLIC_URL + "/sounds";
+const LETTER_AUDIO_FILES = {
+    "א": `${AUDIO_BASE}/alef.mp3`,
+    "ב": `${AUDIO_BASE}/bet.mp3`,
+    "ג": `${AUDIO_BASE}/gimel.mp3`,
+    "ד": `${AUDIO_BASE}/dalet.mp3`,
+    "ה": `${AUDIO_BASE}/he.mp3`,
+    "ו": `${AUDIO_BASE}/vav.mp3`,
+    "ז": `${AUDIO_BASE}/zayin.mp3`,
+    "ח": `${AUDIO_BASE}/chet.mp3`,
+    "ט": `${AUDIO_BASE}/tet.mp3`,
+    "י": `${AUDIO_BASE}/yod.mp3`,
+    "כ": `${AUDIO_BASE}/kaf.mp3`,
+    "ל": `${AUDIO_BASE}/lamed.mp3`,
+    "מ": `${AUDIO_BASE}/mem.mp3`,
+    "נ": `${AUDIO_BASE}/nun.mp3`,
+    "ס": `${AUDIO_BASE}/samekh.mp3`,
+    "ע": `${AUDIO_BASE}/ayin.mp3`,
+    "פ": `${AUDIO_BASE}/pe.mp3`,
+    "צ": `${AUDIO_BASE}/tsadi.mp3`,
+    "ק": `${AUDIO_BASE}/qof.mp3`,
+    "ר": `${AUDIO_BASE}/resh.mp3`,
+    "ש": `${AUDIO_BASE}/shin.mp3`,
+    "ת": `${AUDIO_BASE}/tav.mp3`,
+    "ך": `${AUDIO_BASE}/final-kaf.mp3`,
+    "ם": `${AUDIO_BASE}/final-mem.mp3`,
+    "ן": `${AUDIO_BASE}/final-nun.mp3`,
+    "ף": `${AUDIO_BASE}/final-pe.mp3`,
+    "ץ": `${AUDIO_BASE}/final-tsadi.mp3`
+};
 function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function pickOptions(target,pool,k=4){ const rest=pool.filter(l=>l!==target); const distractors=shuffle(rest).slice(0,Math.max(0,k-1)); return shuffle([target,...distractors]); }
-function useSpeech(){ const speak=(text)=>{ try{ const u=new SpeechSynthesisUtterance(text); u.lang="he-IL"; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);}catch(_e){} }; return speak; }
+
+function useSpeech() {
+    const speak = (letter) => {
+        const src = LETTER_AUDIO_FILES[letter];
+        if (!src) {
+            console.warn("No audio file for:", letter);
+            return;
+        }
+        try {
+            const audio = new Audio(src);
+            audio.play().catch((err) => console.error("Audio play error:", err));
+        } catch (e) {
+            console.error("Audio error:", e);
+        }
+    };
+    return speak;
+}
 
 const LEVELS=[ {id:1,name:"התאם את האות",mode:"visual",goal:8}, {id:2,name:"הקשב ובחר",mode:"audio",goal:8} ];
 
